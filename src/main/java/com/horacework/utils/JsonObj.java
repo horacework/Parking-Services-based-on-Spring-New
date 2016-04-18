@@ -2,9 +2,6 @@ package com.horacework.utils;
 
 import com.sun.org.apache.xpath.internal.operations.String;
 
-/**
- * Created by 大灯泡 on 2016/2/18.
- */
 public class JsonObj {
     private Object data;
     private int stateCode;

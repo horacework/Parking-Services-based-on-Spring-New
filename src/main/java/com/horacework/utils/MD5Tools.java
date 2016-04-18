@@ -3,9 +3,6 @@ package com.horacework.utils;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-/**
- * Created by 大灯泡 on 2015/9/21.
- */
 public class MD5Tools {
     public static String hashKey(String key) {
         String cacheKey;

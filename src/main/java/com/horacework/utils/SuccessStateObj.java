@@ -1,8 +1,5 @@
 package com.horacework.utils;
 
-/**
- * Created by 大灯泡} on 2016/3/30.
- */
 public class SuccessStateObj {
     private int stateCode;
     private long requestTime;

@@ -6,16 +6,12 @@ import javax.persistence.*;
  * Created by HoraceChan on 2016/4/18.
  */
 @Entity
-@Table(name = "markerinfo", schema = "parking", catalog = "")
-public class MarkerinfoEntity {
+@Table(name = "markerid", schema = "parking", catalog = "")
+public class MarkeridEntity {
     private String id;
-    private String name;
     private double latitude;
     private double longitude;
-    private String imgUrl;
-    private int zan;
     private byte isDel;
-    private double price;
 
     @Id
     @Column(name = "id", nullable = false, length = 36)
@@ -25,16 +21,6 @@ public class MarkerinfoEntity {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    @Basic
-    @Column(name = "name", nullable = false, length = 20)
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     @Basic
@@ -58,26 +44,6 @@ public class MarkerinfoEntity {
     }
 
     @Basic
-    @Column(name = "imgUrl", nullable = true, length = 60)
-    public String getImgUrl() {
-        return imgUrl;
-    }
-
-    public void setImgUrl(String imgUrl) {
-        this.imgUrl = imgUrl;
-    }
-
-    @Basic
-    @Column(name = "zan", nullable = false)
-    public int getZan() {
-        return zan;
-    }
-
-    public void setZan(int zan) {
-        this.zan = zan;
-    }
-
-    @Basic
     @Column(name = "isDel", nullable = false)
     public byte getIsDel() {
         return isDel;
@@ -92,15 +58,12 @@ public class MarkerinfoEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        MarkerinfoEntity that = (MarkerinfoEntity) o;
+        MarkeridEntity that = (MarkeridEntity) o;
 
         if (Double.compare(that.latitude, latitude) != 0) return false;
         if (Double.compare(that.longitude, longitude) != 0) return false;
-        if (zan != that.zan) return false;
         if (isDel != that.isDel) return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (imgUrl != null ? !imgUrl.equals(that.imgUrl) : that.imgUrl != null) return false;
 
         return true;
     }
@@ -110,24 +73,11 @@ public class MarkerinfoEntity {
         int result;
         long temp;
         result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
         temp = Double.doubleToLongBits(latitude);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         temp = Double.doubleToLongBits(longitude);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
-        result = 31 * result + (imgUrl != null ? imgUrl.hashCode() : 0);
-        result = 31 * result + zan;
         result = 31 * result + (int) isDel;
         return result;
-    }
-
-    @Basic
-    @Column(name = "price", nullable = false, precision = 0)
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
     }
 }

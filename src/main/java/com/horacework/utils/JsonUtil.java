@@ -3,9 +3,6 @@ package com.horacework.utils;
 import com.google.gson.Gson;
 import com.google.gson.JsonNull;
 
-/**
- * Created by 大灯泡} on 2016/2/18.
- */
 public class JsonUtil {
 
     private static Gson gson = new Gson();

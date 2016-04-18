@@ -6,9 +6,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-/**
- * Created by 大灯泡 on 2016/2/18.
- */
 public class BaseController {
     protected HttpServletRequest request;
 

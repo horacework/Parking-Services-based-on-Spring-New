@@ -1,10 +1,14 @@
 package com.horacework.controller;
 
+import com.horacework.model.MarkeridEntity;
 import com.horacework.model.MarkerinfoEntity;
 import com.horacework.model.UserEntity;
+import com.horacework.repository.MarkeridRepository;
 import com.horacework.repository.MarkerinfoRepository;
 import com.horacework.repository.UserRepository;
 import com.horacework.utils.JsonUtil;
+import com.horacework.utils.MyPrivateKey;
+import com.horacework.utils.RSAUtils;
 import com.mysql.jdbc.log.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,48 +18,49 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 
 @Controller
 public class MainController extends BaseController {
 
-    @Autowired
-    private UserRepository mUserRepo;
-    @Autowired
-    private MarkerinfoRepository markerinfoRepo;
+
 
     @RequestMapping(value = "/",method = RequestMethod.GET)
     public String index(){
         return "index";
     }
-    @RequestMapping(value = "/getuser",method = RequestMethod.GET)
-    public void getuser(){
-        List<UserEntity> results=mUserRepo.findAll();
-        String restStr;
 
-        restStr=results==null?"没有任何数据": JsonUtil.toJson(results);
-
-        try {
-            response.getWriter().write(restStr);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    @RequestMapping(value = "/getAllMarkerId",method = RequestMethod.GET)
-    public void getAllMarkerId(){
-        //List<UserEntity> results=mUserRepo.findAll();
-        List<MarkerinfoEntity> results = markerinfoRepo.findAll();
-        String resStr;
-        if (results == null){
-            resStr = "{}";
+    @RequestMapping(value = "/rsa",method = RequestMethod.GET)
+    public void RSAGenerateTest() throws Exception {
+        String publicKey = null;
+        String privateKey = null;
+//        try {
+//            Map<String, Object> keyMap = RSAUtils.genKeyPair();
+//            publicKey = RSAUtils.getPublicKey(keyMap);
+//            privateKey = RSAUtils.getPrivateKey(keyMap);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+        publicKey = MyPrivateKey.getPublicKey();
+        privateKey = MyPrivateKey.getPrivateKey();
+        //模拟加密前用户名与密码
+        String source = ",123456789";
+        byte[] data = source.getBytes();
+        //加密后的文字
+        byte[] encodedData = RSAUtils.encryptByPublicKey(data, publicKey);
+        //加密之后再解密
+        byte[] decodedData = RSAUtils.decryptByPrivateKey(encodedData, privateKey);
+        String target = new String(decodedData);
+        String[] username = target.split(",");
+        //String publicKeyAndpri = publicKey + "," + privateKey;
+        if (username[0].equals("")){
+            response.getWriter().write("真的是null");
         }else {
-            resStr = JsonUtil.toJson(results);
+            response.getWriter().write(username[0]);
         }
-        try {
-            response.getWriter().write(resStr);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+
     }
 
 

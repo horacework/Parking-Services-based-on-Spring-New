@@ -4,6 +4,7 @@
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         <class>com.horacework.model.MarkerinfoEntity</class>
         <class>com.horacework.model.UserEntity</class>
+        <class>com.horacework.model.MarkeridEntity</class>
 
         <properties>
             <!-- 使用MySQL方言 -->
