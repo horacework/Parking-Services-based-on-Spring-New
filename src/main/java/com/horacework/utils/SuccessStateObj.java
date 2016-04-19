@@ -1,12 +1,16 @@
 package com.horacework.utils;
 
+import static com.horacework.utils.JsonUtil.toJson;
+
 public class SuccessStateObj {
     private int stateCode;
     private long requestTime;
     private int start;
     private int loadMore;
     private String msg;
-    private Object data;
+    //private Object data;
+    private String encodeData;
+    //private String privateKey = MyPrivateKey.getPrivateKey();
 
     public SuccessStateObj(int state, long time, int start, int hasmore, String msg) {
         this.stateCode = state;
@@ -15,9 +19,12 @@ public class SuccessStateObj {
         this.loadMore = hasmore;
         this.msg = msg;
     }
-    public SuccessStateObj(int state, long time, int start, int hasmore, String msg,Object data) {
-       this(state,time,start,hasmore,msg);
-        this.data=data;
+    public SuccessStateObj(int state, long time, int start, int hasmore, String msg,Object data) throws Exception {
+        this(state,time,start,hasmore,msg);
+        //新增:Obj data先转String，再转byte[]进行RSA加密，再转回String
+        String privateKey = MyPrivateKey.getPrivateKey();
+        byte[] encryptByte = RSAUtils.encryptByPrivateKey(JsonUtil.toJson(data).getBytes(),privateKey);
+        this.encodeData= new String(encryptByte);
     }
 
     public int getState() {

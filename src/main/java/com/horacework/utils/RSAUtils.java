@@ -320,4 +320,9 @@ public class RSAUtils {
         return Base64Utils.encode(key.getEncoded());
     }
 
+    public static String DecodeDataToString(String data , String PRIVATE_KEY) throws Exception {
+        byte[] encodedData = data.getBytes();
+        byte[] decodedData = decryptByPrivateKey(encodedData, PRIVATE_KEY);
+        return new String(decodedData);
+    }
 }
