@@ -5,6 +5,7 @@
         <class>com.horacework.model.MarkerinfoEntity</class>
         <class>com.horacework.model.UserEntity</class>
         <class>com.horacework.model.MarkeridEntity</class>
+        <class>com.horacework.model.UserlogEntity</class>
 
         <properties>
             <!-- 使用MySQL方言 -->
