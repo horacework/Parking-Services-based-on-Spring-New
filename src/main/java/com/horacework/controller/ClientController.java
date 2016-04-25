@@ -60,11 +60,6 @@ public class ClientController extends BaseController {
     @RequestMapping(value = "/userSignup",method = RequestMethod.POST)
     public void userSignup(@RequestParam String username , @RequestParam String password , @RequestParam String password2 , @RequestParam String deviceid) throws Exception {
         String resultStr;
-//        String realData = RSAUtils.DecodeDataToString(data,privateKey);
-//        String username = realData.split(",")[0];
-//        String password = realData.split(",")[1];
-//        String password2 = realData.split(",")[2];
-//        String deviceId = realData.split(",")[3];
 
         if (!password.equals(password2)){
             //两次密码不一致的情况
@@ -108,19 +103,7 @@ public class ClientController extends BaseController {
     @RequestMapping(value = "/userLogin",method = RequestMethod.POST)
     public void userLogin(@RequestParam String username ,@RequestParam String password , @RequestParam String deviceid) throws Exception {
         String resultStr;
-        //接受已加密的字符串data，并解密。
-//        String username = "chen";     //测试数据
-//        String password = "aaaa";     //测试数据
-//        String deviceId = "ssssssssssssssssssssssssssssssssssss";     //测试数据
-//        String username;
-//        String password;
-//        String deviceId;
-//        byte[] encodedData = data.getBytes();
-//        byte[] decodedData = RSAUtils.decryptByPrivateKey(encodedData, privateKey);
-//        String realData = new String(decodedData);
-//        username = realData.split(",")[0];
-//        password = realData.split(",")[1];//TODO:安卓设备中应该检测用户名与密码内不能存在逗号
-//        deviceId = realData.split(",")[2];//TODO:获得安卓设备识别码 TelephonyManager.getDeviceId()
+
         if (username.equals("") || password.equals("") || deviceid.equals("") ){
             //username与password不能为空
             resultStr=JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"参数不能为空"));
