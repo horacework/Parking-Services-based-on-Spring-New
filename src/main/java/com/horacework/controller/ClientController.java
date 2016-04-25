@@ -57,9 +57,9 @@ public class ClientController extends BaseController {
             e.printStackTrace();
         }
     }
-    @RequestMapping(value = "/userSignup",method = RequestMethod.GET)
+    @RequestMapping(value = "/userSignup",method = RequestMethod.POST)
     public void userSignup(@RequestParam String username , @RequestParam String password , @RequestParam String password2 , @RequestParam String deviceid) throws Exception {
-        String resultStr = null;
+        String resultStr;
 //        String realData = RSAUtils.DecodeDataToString(data,privateKey);
 //        String username = realData.split(",")[0];
 //        String password = realData.split(",")[1];
@@ -69,26 +69,26 @@ public class ClientController extends BaseController {
         if (!password.equals(password2)){
             //两次密码不一致的情况
             resultStr = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"两次密码不一致"));
-        }else {
+        }else if(username.equals("") || password.equals("") || deviceid.equals("") ){
+            resultStr = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"参数不能为空"));
+        }else if (mUserRepo.userExist(username) != null){
             //查询username是否被占用
-            if (mUserRepo.userExist(username) != null){
-                resultStr = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"该username已被占用"));
-            }else {
-                UserEntity newUser = new UserEntity();
-                newUser.setId(UUID.randomUUID().toString());
-                newUser.setName(username);
-                newUser.setPassword(password);
-                UserEntity userEntity = mUserRepo.saveAndFlush(newUser);
-                userEntity.setPassword("****");
-                resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"注册成功",userEntity));
-                //注册成功后自动登录，记录插入
-                UserlogEntity userlog = new UserlogEntity();
-                userlog.setUserId(userEntity.getId());
-                userlog.setDeviceId(deviceid);
-                userlog.setIsLoginOut(0);
-                userlog.setLoginTime(new Timestamp(System.currentTimeMillis()));
-                UserlogEntity logResult = mUserlogRepo.saveAndFlush(userlog);
-            }
+            resultStr = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"该username已被占用"));
+        }else {
+            UserEntity newUser = new UserEntity();
+            newUser.setId(UUID.randomUUID().toString());
+            newUser.setName(username);
+            newUser.setPassword(password);
+            UserEntity userEntity = mUserRepo.saveAndFlush(newUser);
+            userEntity.setPassword("****");
+            resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"注册成功",userEntity));
+            //注册成功后自动登录，记录插入
+            UserlogEntity userlog = new UserlogEntity();
+            userlog.setUserId(userEntity.getId());
+            userlog.setDeviceId(deviceid);
+            userlog.setIsLoginOut(0);
+            userlog.setLoginTime(new Timestamp(System.currentTimeMillis()));
+            UserlogEntity logResult = mUserlogRepo.saveAndFlush(userlog);
         }
         response.getWriter().write(resultStr);
     }
@@ -105,7 +105,7 @@ public class ClientController extends BaseController {
         }
         response.getWriter().write(resultStr);
     }
-    @RequestMapping(value = "/userLogin",method = RequestMethod.GET)
+    @RequestMapping(value = "/userLogin",method = RequestMethod.POST)
     public void userLogin(@RequestParam String username ,@RequestParam String password , @RequestParam String deviceid) throws Exception {
         String resultStr;
         //接受已加密的字符串data，并解密。
