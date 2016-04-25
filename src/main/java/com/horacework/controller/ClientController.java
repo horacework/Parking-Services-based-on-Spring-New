@@ -58,13 +58,13 @@ public class ClientController extends BaseController {
         }
     }
     @RequestMapping(value = "/userSignup",method = RequestMethod.GET)
-    public void userSignup(@RequestParam String data) throws Exception {
+    public void userSignup(@RequestParam String username , @RequestParam String password , @RequestParam String password2 , @RequestParam String deviceid) throws Exception {
         String resultStr = null;
-        String realData = RSAUtils.DecodeDataToString(data,privateKey);
-        String username = realData.split(",")[0];
-        String password = realData.split(",")[1];
-        String password2 = realData.split(",")[2];
-        String deviceId = realData.split(",")[3];
+//        String realData = RSAUtils.DecodeDataToString(data,privateKey);
+//        String username = realData.split(",")[0];
+//        String password = realData.split(",")[1];
+//        String password2 = realData.split(",")[2];
+//        String deviceId = realData.split(",")[3];
 
         if (!password.equals(password2)){
             //两次密码不一致的情况
@@ -80,11 +80,11 @@ public class ClientController extends BaseController {
                 newUser.setPassword(password);
                 UserEntity userEntity = mUserRepo.saveAndFlush(newUser);
                 userEntity.setPassword("****");
-                resultStr = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"注册成功",userEntity));
+                resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"注册成功",userEntity));
                 //注册成功后自动登录，记录插入
                 UserlogEntity userlog = new UserlogEntity();
                 userlog.setUserId(userEntity.getId());
-                userlog.setDeviceId(deviceId);
+                userlog.setDeviceId(deviceid);
                 userlog.setIsLoginOut(0);
                 userlog.setLoginTime(new Timestamp(System.currentTimeMillis()));
                 UserlogEntity logResult = mUserlogRepo.saveAndFlush(userlog);
@@ -106,22 +106,22 @@ public class ClientController extends BaseController {
         response.getWriter().write(resultStr);
     }
     @RequestMapping(value = "/userLogin",method = RequestMethod.GET)
-    public void userLogin(@RequestParam String data) throws Exception {
+    public void userLogin(@RequestParam String username ,@RequestParam String password , @RequestParam String deviceid) throws Exception {
         String resultStr;
         //接受已加密的字符串data，并解密。
 //        String username = "chen";     //测试数据
 //        String password = "aaaa";     //测试数据
 //        String deviceId = "ssssssssssssssssssssssssssssssssssss";     //测试数据
-        String username;
-        String password;
-        String deviceId;
-        byte[] encodedData = data.getBytes();
-        byte[] decodedData = RSAUtils.decryptByPrivateKey(encodedData, privateKey);
-        String realData = new String(decodedData);
-        username = realData.split(",")[0];
-        password = realData.split(",")[1];//TODO:安卓设备中应该检测用户名与密码内不能存在逗号
-        deviceId = realData.split(",")[2];//TODO:获得安卓设备识别码 TelephonyManager.getDeviceId()
-        if (username.equals("") || password.equals("") || deviceId.equals("") ){
+//        String username;
+//        String password;
+//        String deviceId;
+//        byte[] encodedData = data.getBytes();
+//        byte[] decodedData = RSAUtils.decryptByPrivateKey(encodedData, privateKey);
+//        String realData = new String(decodedData);
+//        username = realData.split(",")[0];
+//        password = realData.split(",")[1];//TODO:安卓设备中应该检测用户名与密码内不能存在逗号
+//        deviceId = realData.split(",")[2];//TODO:获得安卓设备识别码 TelephonyManager.getDeviceId()
+        if (username.equals("") || password.equals("") || deviceid.equals("") ){
             //username与password不能为空
             resultStr=JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"参数不能为空"));
         }else {
@@ -133,7 +133,7 @@ public class ClientController extends BaseController {
                     //插入userlog日志数据表
                     UserlogEntity userlog = new UserlogEntity();
                     userlog.setUserId(result.getId());
-                    userlog.setDeviceId(deviceId);
+                    userlog.setDeviceId(deviceid);
                     userlog.setIsLoginOut(0);
 //                    Date now = new Date();
 //                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -141,7 +141,7 @@ public class ClientController extends BaseController {
                     UserlogEntity logResult = mUserlogRepo.saveAndFlush(userlog);
 
                 }else {
-                    resultStr=JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"用户名或密码错误"));
+                    resultStr=JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"用户名或密码错误"));
                 }
             } catch (NullPointerException e) {
                 e.printStackTrace();
@@ -169,14 +169,14 @@ public class ClientController extends BaseController {
 
     //地图中Marker数据
     @RequestMapping(value = "/getAllMarkerId",method = RequestMethod.GET)
-    public void getAllMarkerId() {
+    public void getAllMarkerId() throws Exception {
         //List<UserEntity> results=mUserRepo.findAll();
         List<MarkeridEntity> results = markeridRepo.findAll();
         String resStr;
         if (results == null) {
-            resStr = "{}";
+            resStr = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"数据发生错误"));
         } else {
-            resStr = JsonUtil.toJson(results);
+            resStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"数据查询成功",results));
         }
         try {
             response.getWriter().write(resStr);
@@ -185,14 +185,14 @@ public class ClientController extends BaseController {
         }
     }
     @RequestMapping(value = "/getMarkerInfoById",method = RequestMethod.GET)
-    public void getMarkerInfoById (@RequestParam String id) {
+    public void getMarkerInfoById (@RequestParam String id) throws Exception {
 
         MarkerinfoEntity result = markerinfoRepo.findOne(id);
         String string;
         if (result == null) {
-            string = "{}";
+            string = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"数据发生错误","{}"));
         } else {
-            string = JsonUtil.toJson(result);
+            string = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"数据查找成功",result));
         }
         try {
             response.getWriter().write(string);

@@ -8,8 +8,8 @@ public class SuccessStateObj {
     private int start;
     private int loadMore;
     private String msg;
-    //private Object data;
-    private String encodeData;
+    private Object data;
+    //private byte[] encodeData;
     //private String privateKey = MyPrivateKey.getPrivateKey();
 
     public SuccessStateObj(int state, long time, int start, int hasmore, String msg) {
@@ -22,9 +22,9 @@ public class SuccessStateObj {
     public SuccessStateObj(int state, long time, int start, int hasmore, String msg,Object data) throws Exception {
         this(state,time,start,hasmore,msg);
         //新增:Obj data先转String，再转byte[]进行RSA加密，再转回String
-        String privateKey = MyPrivateKey.getPrivateKey();
-        byte[] encryptByte = RSAUtils.encryptByPrivateKey(JsonUtil.toJson(data).getBytes(),privateKey);
-        this.encodeData= new String(encryptByte);
+        //String privateKey = MyPrivateKey.getPrivateKey();
+        //this.encodeData= RSAUtils.encryptByPrivateKey(JsonUtil.toJson(data).getBytes(),privateKey);
+        this.data = data;
     }
 
     public int getState() {
