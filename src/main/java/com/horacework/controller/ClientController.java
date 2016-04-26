@@ -44,7 +44,7 @@ public class ClientController extends BaseController {
     private String privateKey = MyPrivateKey.getPrivateKey();
 
     //用户数据操作
-    @RequestMapping(value = "/getUser",method = RequestMethod.GET)
+    @RequestMapping(value = "/getUser",method = RequestMethod.GET)//仅供测试
     public void getUser(){
         List<UserEntity> results=mUserRepo.findAll();
         String restStr;
@@ -87,7 +87,7 @@ public class ClientController extends BaseController {
         }
         response.getWriter().write(resultStr);
     }
-    @RequestMapping(value = "/usernameCheck",method = RequestMethod.GET)
+    @RequestMapping(value = "/usernameCheck",method = RequestMethod.GET)//分离出来待使用，注册功能已包括
     public void usernameChack(@RequestParam String data) throws Exception {
         String resultStr;
         String username = RSAUtils.DecodeDataToString(data,privateKey);
@@ -133,14 +133,14 @@ public class ClientController extends BaseController {
         }
         response.getWriter().write(resultStr);//返回已组装好的JSON
     }
-    @RequestMapping(value = "/userLogout",method = RequestMethod.GET)
-    public void userLogout(@RequestParam String data) throws Exception{
+    @RequestMapping(value = "/userLogout",method = RequestMethod.POST)
+    public void userLogout(@RequestParam String userid , @RequestParam String deviceid) throws Exception{
         String resultStr;
-        String realData = RSAUtils.DecodeDataToString(data,privateKey);
-        String uid = realData.split(",")[0];
-        //String deviceId = realData.split(",")[1];
         try {
-            UserlogEntity userlogEntity = mUserlogRepo.updateUserLogout(uid,new Timestamp(System.currentTimeMillis()));
+            UserlogEntity userlogEntity = mUserlogRepo.findUserLogout(userid ,deviceid);
+            userlogEntity.setLogoutTime(new Timestamp(System.currentTimeMillis()));
+            userlogEntity.setIsLoginOut(1);
+            UserlogEntity userLogoutResult = mUserlogRepo.saveAndFlush(userlogEntity);
             resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"登出成功"));
         } catch (NullPointerException e) {
             e.printStackTrace();
