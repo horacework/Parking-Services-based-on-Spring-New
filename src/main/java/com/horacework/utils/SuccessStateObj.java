@@ -19,7 +19,7 @@ public class SuccessStateObj {
         this.loadMore = hasmore;
         this.msg = msg;
     }
-    public SuccessStateObj(int state, long time, int start, int hasmore, String msg,Object data) throws Exception {
+    public SuccessStateObj(int state, long time, int start, int hasmore, String msg,Object data) {
         this(state,time,start,hasmore,msg);
         //新增:Obj data先转String，再转byte[]进行RSA加密，再转回String
         //String privateKey = MyPrivateKey.getPrivateKey();

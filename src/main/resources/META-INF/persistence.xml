@@ -6,6 +6,12 @@
         <class>com.horacework.model.UserEntity</class>
         <class>com.horacework.model.MarkeridEntity</class>
         <class>com.horacework.model.UserlogEntity</class>
+        <class>com.horacework.model.FeedbackEntity</class>
+        <class>com.horacework.model.ParkinglogEntity</class>
+        <class>com.horacework.model.UsercarEntity</class>
+        <class>com.horacework.model.UserfavoriteEntity</class>
+        <class>com.horacework.model.UsermoneyEntity</class>
+        <class>com.horacework.model.UserorderEntity</class>
 
         <properties>
             <!-- 使用MySQL方言 -->

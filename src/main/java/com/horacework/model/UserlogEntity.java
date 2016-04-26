@@ -16,6 +16,10 @@ public class UserlogEntity {
     private int isLoginOut;
     private Timestamp logoutTime;
 
+    public void setIsLoginOut(byte isLoginOut) {
+        this.isLoginOut = isLoginOut;
+    }
+
     @Id
     @Column(name = "logId", nullable = false)
     public int getLogId() {

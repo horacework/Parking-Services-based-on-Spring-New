@@ -1,14 +1,8 @@
 package com.horacework.controller;
 
 
-import com.horacework.model.MarkeridEntity;
-import com.horacework.model.MarkerinfoEntity;
-import com.horacework.model.UserEntity;
-import com.horacework.model.UserlogEntity;
-import com.horacework.repository.MarkeridRepository;
-import com.horacework.repository.MarkerinfoRepository;
-import com.horacework.repository.UserRepository;
-import com.horacework.repository.UserlogRepository;
+import com.horacework.model.*;
+import com.horacework.repository.*;
 import com.horacework.utils.JsonUtil;
 import com.horacework.utils.MyPrivateKey;
 import com.horacework.utils.RSAUtils;
@@ -37,6 +31,8 @@ public class ClientController extends BaseController {
     @Autowired
     private UserlogRepository mUserlogRepo;
     @Autowired
+    private UsermoneyRepository mUsermoneyRepository;
+    @Autowired
     private MarkeridRepository markeridRepo;
     @Autowired
     private MarkerinfoRepository markerinfoRepo;
@@ -44,6 +40,8 @@ public class ClientController extends BaseController {
     private String privateKey = MyPrivateKey.getPrivateKey();
 
     //用户数据操作
+
+    //用户的注册与登入登出API
     @RequestMapping(value = "/getUser",method = RequestMethod.GET)//仅供测试
     public void getUser(){
         List<UserEntity> results=mUserRepo.findAll();
@@ -77,6 +75,14 @@ public class ClientController extends BaseController {
             UserEntity userEntity = mUserRepo.saveAndFlush(newUser);
             userEntity.setPassword("****");
             resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"注册成功",userEntity));
+            //注册成功后自动给账户充值10块钱
+            UsermoneyEntity usermoneyChange = new UsermoneyEntity();
+            usermoneyChange.setUserId(userEntity.getId());
+            usermoneyChange.setCurrentTime(new Timestamp(System.currentTimeMillis()));
+            usermoneyChange.setType(2);
+            usermoneyChange.setFigure(10);
+            usermoneyChange.setRemain(10);
+            UsermoneyEntity usermoneyResult = mUsermoneyRepository.saveAndFlush(usermoneyChange);
             //注册成功后自动登录，记录插入
             UserlogEntity userlog = new UserlogEntity();
             userlog.setUserId(userEntity.getId());
@@ -149,6 +155,77 @@ public class ClientController extends BaseController {
         response.getWriter().write(resultStr);
     }
 
+    //用户的服务API
+
+    //用户余额操作
+    @RequestMapping(value = "/userCheckMyMoney",method = RequestMethod.GET)
+    public void userCheckMyMoney(@RequestParam String userid) throws Exception {
+        //获取用户余额
+        String resultStr;
+        try {
+            UsermoneyEntity usermoneyEntity = mUsermoneyRepository.findUserMoneyLastLogById(userid);
+            resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"查询成功",usermoneyEntity));
+        } catch (NullPointerException e) {
+            resultStr = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"查询失败"));
+        }
+        response.getWriter().write(resultStr);
+    }
+    @RequestMapping(value = "/userMyMoneyLog",method = RequestMethod.GET)
+    public void userMyMoneyLog(@RequestParam String userid) throws Exception {
+        //获取用户余额的支出记录
+        String resultStr;
+        try {
+            List<UsermoneyEntity> usermoneyEntityList = mUsermoneyRepository.findUserMoneyAllLogById(userid);
+            resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"登出成功",usermoneyEntityList));
+        }catch (NullPointerException e){
+            resultStr = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"查询记录失败"));
+        }
+        response.getWriter().write(resultStr);
+    }
+    public String changeUserMoney(String userid , int type , int figure) throws Exception {
+        //改变用户余额
+        //Type变量约定：1为支出，2为充值
+        String resultStr;
+        int moneyRemain;
+        try {
+            UsermoneyEntity usermoneyEntity = mUsermoneyRepository.findUserMoneyLastLogById(userid);
+            UsermoneyEntity usermoneyChange = new UsermoneyEntity();
+            UsermoneyEntity usermoneyResult;
+            moneyRemain = usermoneyEntity.getRemain();
+            switch (type){
+                case 1:
+                    if (moneyRemain < figure){
+                        //余额不足
+                        resultStr = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"余额不足"));
+                    }else {
+                        moneyRemain = moneyRemain - figure;
+                        usermoneyChange.setUserId(userid);
+                        usermoneyChange.setCurrentTime(new Timestamp(System.currentTimeMillis()));
+                        usermoneyChange.setType(type);
+                        usermoneyChange.setFigure(figure);
+                        usermoneyChange.setRemain(moneyRemain);
+                        usermoneyResult = mUsermoneyRepository.saveAndFlush(usermoneyChange);
+                        resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"交易成功",usermoneyResult));
+                    }
+                    break;
+                case 2:
+                    moneyRemain = moneyRemain + figure;
+                    usermoneyChange.setUserId(userid);
+                    usermoneyChange.setCurrentTime(new Timestamp(System.currentTimeMillis()));
+                    usermoneyChange.setType(type);
+                    usermoneyChange.setFigure(figure);
+                    usermoneyChange.setRemain(moneyRemain);
+                    usermoneyResult = mUsermoneyRepository.saveAndFlush(usermoneyChange);
+                    resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"充值成功",usermoneyResult));
+                    break;
+                default:
+                    resultStr = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"类型码错误"));
+            }
+        } catch (NullPointerException e) {
+            resultStr = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"查询失败"));
+        }
+        return resultStr;
+    }
 
     //地图中Marker数据
     @RequestMapping(value = "/getAllMarkerId",method = RequestMethod.GET)
