@@ -11,6 +11,7 @@
 * 2016.04.18 Spring + Jpa + Hibernate框架搭建，Jsp、json的demo测试通过
 * 2016.04.20 支持Android端获取Marker简要与详细信息
 * 2016.04.25 支持Android端注册、登录功能
+* 2016.04.27 支持Android端用户金额相关功能
 
 相应匹配的**Android端**项目地址：[github.com/horacework/Parking-Services-based-on-Android](https://github.com/horacework/Parking-Services-based-on-Android)
 
