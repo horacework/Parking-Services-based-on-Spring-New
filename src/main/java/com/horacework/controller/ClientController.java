@@ -176,7 +176,7 @@ public class ClientController extends BaseController {
         String resultStr;
         try {
             List<UsermoneyEntity> usermoneyEntityList = mUsermoneyRepository.findUserMoneyAllLogById(userid);
-            resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"登出成功",usermoneyEntityList));
+            resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"查询成功",usermoneyEntityList));
         }catch (NullPointerException e){
             resultStr = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"查询记录失败"));
         }
