@@ -1,17 +1,19 @@
 package com.horacework.model;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 /**
- * Created by HoraceChan on 2016/4/26.
+ * Created by HoraceChan on 2016/4/28.
  */
 @Entity
 @Table(name = "feedback", schema = "parking", catalog = "")
 public class FeedbackEntity {
     private int id;
     private String userId;
-    private String title;
+    private String telphone;
     private String content;
+    private Timestamp currentTime;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -34,13 +36,13 @@ public class FeedbackEntity {
     }
 
     @Basic
-    @Column(name = "title", nullable = false, length = 40)
-    public String getTitle() {
-        return title;
+    @Column(name = "telphone", nullable = true, length = 50)
+    public String getTelphone() {
+        return telphone;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setTelphone(String telphone) {
+        this.telphone = telphone;
     }
 
     @Basic
@@ -53,6 +55,16 @@ public class FeedbackEntity {
         this.content = content;
     }
 
+    @Basic
+    @Column(name = "currentTime", nullable = false)
+    public Timestamp getCurrentTime() {
+        return currentTime;
+    }
+
+    public void setCurrentTime(Timestamp currentTime) {
+        this.currentTime = currentTime;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -62,8 +74,9 @@ public class FeedbackEntity {
 
         if (id != that.id) return false;
         if (userId != null ? !userId.equals(that.userId) : that.userId != null) return false;
-        if (title != null ? !title.equals(that.title) : that.title != null) return false;
+        if (telphone != null ? !telphone.equals(that.telphone) : that.telphone != null) return false;
         if (content != null ? !content.equals(that.content) : that.content != null) return false;
+        if (currentTime != null ? !currentTime.equals(that.currentTime) : that.currentTime != null) return false;
 
         return true;
     }
@@ -72,8 +85,9 @@ public class FeedbackEntity {
     public int hashCode() {
         int result = id;
         result = 31 * result + (userId != null ? userId.hashCode() : 0);
-        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (telphone != null ? telphone.hashCode() : 0);
         result = 31 * result + (content != null ? content.hashCode() : 0);
+        result = 31 * result + (currentTime != null ? currentTime.hashCode() : 0);
         return result;
     }
 }

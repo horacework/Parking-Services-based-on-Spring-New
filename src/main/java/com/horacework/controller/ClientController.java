@@ -35,6 +35,10 @@ public class ClientController extends BaseController {
     @Autowired
     private UsercarRepository mUsercarRepository;
     @Autowired
+    private UserFeedbackRepository mUserFeedbackRepository;
+
+
+    @Autowired
     private MarkeridRepository markeridRepo;
     @Autowired
     private MarkerinfoRepository markerinfoRepo;
@@ -241,7 +245,7 @@ public class ClientController extends BaseController {
         }
         response.getWriter().write(resultStr);
     }
-    @RequestMapping(value = "/userAddCars",method = RequestMethod.GET)
+    @RequestMapping(value = "/userAddCars",method = RequestMethod.POST)
     public void userAddCarsById(@RequestParam String userid , @RequestParam String plate) throws Exception{
         String resultStr;
         try {
@@ -270,7 +274,24 @@ public class ClientController extends BaseController {
         response.getWriter().write(resultStr);
     }
 
+    //用户反馈
+    @RequestMapping(value = "/userFeedback",method = RequestMethod.POST)
+    public void getUserFeedback(@RequestParam String userid , @RequestParam String tel , @RequestParam String content) throws Exception{
+        String resultStr;
+        FeedbackEntity feedbackEntity = new FeedbackEntity();
 
+        feedbackEntity.setUserId(userid);
+        feedbackEntity.setTelphone(tel);
+        feedbackEntity.setContent(content);
+        feedbackEntity.setCurrentTime(new Timestamp(System.currentTimeMillis()));
+        try {
+            mUserFeedbackRepository.saveAndFlush(feedbackEntity);
+            resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"意见已提交，我们会尽快处理"));
+        }catch (NullPointerException e){
+            resultStr = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"提交失败"));
+        }
+        response.getWriter().write(resultStr);
+    }
 
 
     //地图中Marker数据
