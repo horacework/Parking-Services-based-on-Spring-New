@@ -3,7 +3,7 @@ package com.horacework.model;
 import javax.persistence.*;
 
 /**
- * Created by HoraceChan on 2016/4/26.
+ * Created by HoraceChan on 2016/4/28.
  */
 @Entity
 @Table(name = "usercar", schema = "parking", catalog = "")
@@ -11,7 +11,7 @@ public class UsercarEntity {
     private String carId;
     private String userId;
     private String plate;
-    private byte isDel;
+    private int isDel;
 
     @Id
     @Column(name = "carId", nullable = false, length = 36)
@@ -45,11 +45,11 @@ public class UsercarEntity {
 
     @Basic
     @Column(name = "isDel", nullable = false)
-    public byte getIsDel() {
+    public int getIsDel() {
         return isDel;
     }
 
-    public void setIsDel(byte isDel) {
+    public void setIsDel(int isDel) {
         this.isDel = isDel;
     }
 
@@ -73,7 +73,7 @@ public class UsercarEntity {
         int result = carId != null ? carId.hashCode() : 0;
         result = 31 * result + (userId != null ? userId.hashCode() : 0);
         result = 31 * result + (plate != null ? plate.hashCode() : 0);
-        result = 31 * result + (int) isDel;
+        result = 31 * result + isDel;
         return result;
     }
 }

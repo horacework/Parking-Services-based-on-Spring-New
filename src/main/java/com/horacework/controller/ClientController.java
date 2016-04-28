@@ -33,6 +33,8 @@ public class ClientController extends BaseController {
     @Autowired
     private UsermoneyRepository mUsermoneyRepository;
     @Autowired
+    private UsercarRepository mUsercarRepository;
+    @Autowired
     private MarkeridRepository markeridRepo;
     @Autowired
     private MarkerinfoRepository markerinfoRepo;
@@ -226,6 +228,50 @@ public class ClientController extends BaseController {
         }
         return resultStr;
     }
+
+    //用户车牌操作
+    @RequestMapping(value = "/userCars",method = RequestMethod.GET)
+    public void findUserCarsById(@RequestParam String userid) throws Exception{
+        String resultStr;
+        try {
+            List<UsercarEntity> usercarEntityList = mUsercarRepository.findUserCarById(userid);
+            resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"查询用户车牌成功",usercarEntityList));
+        }catch (NullPointerException e){
+            resultStr = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"该用户无车牌"));
+        }
+        response.getWriter().write(resultStr);
+    }
+    @RequestMapping(value = "/userAddCars",method = RequestMethod.GET)
+    public void userAddCarsById(@RequestParam String userid , @RequestParam String plate) throws Exception{
+        String resultStr;
+        try {
+            UsercarEntity usercarEntity = new UsercarEntity();
+            usercarEntity.setCarId(UUID.randomUUID().toString());
+            usercarEntity.setUserId(userid);
+            usercarEntity.setPlate(plate);
+            mUsercarRepository.saveAndFlush(usercarEntity);
+            resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"用户车牌添加成功"));
+        }catch (NullPointerException e){
+            resultStr = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"用户车牌添加失败"));
+        }
+        response.getWriter().write(resultStr);
+    }
+    @RequestMapping(value = "/userDeleteCar" ,method = RequestMethod.GET)
+    public void  userDeleteCar(@RequestParam String userid , @RequestParam String carid) throws Exception {
+        String resultStr;
+        try {
+            UsercarEntity usercarEntity = mUsercarRepository.findOneUserCarById(userid,carid);
+            usercarEntity.setIsDel(1);
+            mUsercarRepository.saveAndFlush(usercarEntity);
+            resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"车牌删除成功"));
+        }catch (NullPointerException e){
+            resultStr = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"车牌删除失败"));
+        }
+        response.getWriter().write(resultStr);
+    }
+
+
+
 
     //地图中Marker数据
     @RequestMapping(value = "/getAllMarkerId",method = RequestMethod.GET)
