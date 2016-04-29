@@ -260,7 +260,7 @@ public class ClientController extends BaseController {
         }
         response.getWriter().write(resultStr);
     }
-    @RequestMapping(value = "/userDeleteCar" ,method = RequestMethod.GET)
+    @RequestMapping(value = "/userDeleteCar" ,method = RequestMethod.POST)
     public void  userDeleteCar(@RequestParam String userid , @RequestParam String carid) throws Exception {
         String resultStr;
         try {
