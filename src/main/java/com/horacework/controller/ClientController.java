@@ -12,13 +12,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import sun.reflect.generics.tree.VoidDescriptor;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,6 +31,8 @@ public class ClientController extends BaseController {
     private UsermoneyRepository mUsermoneyRepository;
     @Autowired
     private UsercarRepository mUsercarRepository;
+    @Autowired
+    private UserParkingRepository mUserParkingRepository;
     @Autowired
     private UserFeedbackRepository mUserFeedbackRepository;
 
@@ -273,6 +272,56 @@ public class ClientController extends BaseController {
         }
         response.getWriter().write(resultStr);
     }
+    @RequestMapping(value = "/userCarName",method = RequestMethod.GET)
+    public void userCarName(@RequestParam String carid) throws IOException {
+        String resultStr;
+        try {
+            UsercarEntity usercarEntity = mUsercarRepository.findUserCarNameById(carid);
+            resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"车牌名称查询成功",usercarEntity));
+        }catch (NullPointerException e){
+            resultStr = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"车牌名称查询失败"));
+        }
+        response.getWriter().write(resultStr);
+    }
+
+    //用户停车记录
+    @RequestMapping(value = "/userMyParkingLog" ,method = RequestMethod.GET)
+    public void userMyParkingLog(@RequestParam String userid) throws IOException{
+        String resultStr;
+        try {
+            List<ParkinglogShowEntity> resList = new ArrayList<ParkinglogShowEntity>();
+            List<ParkinglogEntity> parkinglogEntityList = mUserParkingRepository.findUserParkingAllLogById(userid);
+            for(ParkinglogEntity i : parkinglogEntityList){
+                ParkinglogShowEntity p = new ParkinglogShowEntity();
+                p.setLogId(i.getLogId());
+                p.setEnterTime(i.getEnterTime());
+                p.setLeaveTime(i.getLeaveTime());
+                UsercarEntity usercarEntity = mUsercarRepository.findUserCarNameById(i.getCarId());
+                p.setPlate(usercarEntity.getPlate());
+                MarkerinfoEntity markerinfoEntity = markerinfoRepo.findOne(i.getMarkerId());
+                p.setName(markerinfoEntity.getName());
+                resList.add(p);
+            }
+            resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"停车记录",resList));
+        } catch (NullPointerException e) {
+            resultStr = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"没有停车记录"));
+        }
+        response.getWriter().write(resultStr);
+    }
+//    @RequestMapping(value = "/userMyParkingLogg" ,method = RequestMethod.GET)
+//    public void userMyParkingLogg(@RequestParam String userid) throws Exception{
+//        String resultStr;
+//        EntityManagerFactory factory = Persistence.createEntityManagerFactory("org.hibernate.ejb.HibernatePersistence");
+//        EntityManager em = factory.createEntityManager();
+//        List<ParkinglogShowEntity> p = em.createQuery("select new com.horacework.model.ParkinglogShowEntity(ParkinglogEntity.logId,ParkinglogEntity.enterTime,ParkinglogEntity .leaveTime,UsercarEntity .plate,MarkerinfoEntity .name) " +
+//                "from ParkinglogEntity a ,UsercarEntity b , MarkerinfoEntity c " +
+//                "where a.carId=b.carId and a.markerId=c.id and a.userId="+userid)
+//                .getResultList();
+//        em.close();
+//        factory.close();
+//        resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"停车记录",p));
+//        response.getWriter().write(resultStr);
+//    }
 
     //用户反馈
     @RequestMapping(value = "/userFeedback",method = RequestMethod.POST)
