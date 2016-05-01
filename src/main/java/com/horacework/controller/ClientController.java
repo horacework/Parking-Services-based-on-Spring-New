@@ -417,4 +417,19 @@ public class ClientController extends BaseController {
             e.printStackTrace();
         }
     }
+    @RequestMapping(value = "/getMarkerLocationById",method = RequestMethod.GET)
+    public void getMarkerLocationById (@RequestParam String id) throws Exception {
+        MarkeridEntity result = markeridRepo.findOne(id);
+        String string;
+        if (result == null) {
+            string = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"数据发生错误","{}"));
+        } else {
+            string = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"数据查找成功",result));
+        }
+        try {
+            response.getWriter().write(string);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
