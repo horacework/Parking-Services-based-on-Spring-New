@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 100109
 File Encoding         : 65001
 
-Date: 2016-04-27 23:23:53
+Date: 2016-05-01 21:25:22
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -22,14 +22,16 @@ DROP TABLE IF EXISTS `feedback`;
 CREATE TABLE `feedback` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userId` varchar(36) DEFAULT NULL,
-  `title` varchar(40) NOT NULL,
+  `telphone` varchar(50) DEFAULT NULL,
   `content` varchar(200) NOT NULL,
+  `currentTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of feedback
 -- ----------------------------
+INSERT INTO `feedback` VALUES ('1', 'bfd083b6-9179-4c99-81ee-2713bc2a463c', '咯理论考虑', '咯巩固', '2016-04-28 22:57:47');
 
 -- ----------------------------
 -- Table structure for markerid
@@ -74,8 +76,8 @@ CREATE TABLE `markerinfo` (
 -- ----------------------------
 INSERT INTO `markerinfo` VALUES ('b4850fda-047b-11e6-b034-00ff9099da81', '广工大停车场', null, '2', '0', '0', '0', '0');
 INSERT INTO `markerinfo` VALUES ('b4851ab1-047b-11e6-b034-00ff9099da81', '中心湖停车场', null, '2', '0', '0', '0', '0');
-INSERT INTO `markerinfo` VALUES ('e5a3715d-047c-11e6-b034-00ff9099da81', '华工大停车场', null, '2', '0', '0', '0', '0');
-INSERT INTO `markerinfo` VALUES ('e5a380fc-047c-11e6-b034-00ff9099da81', '中山大学停车场', null, '2', '0', '0', '0', '0');
+INSERT INTO `markerinfo` VALUES ('e5a3715d-047c-11e6-b034-00ff9099da81', '华工大停车场', null, '2.56', '1', '0', '0', '0');
+INSERT INTO `markerinfo` VALUES ('e5a380fc-047c-11e6-b034-00ff9099da81', '中山大学停车场', null, '2', '1', '0', '0', '0');
 
 -- ----------------------------
 -- Table structure for parkinglog
@@ -96,6 +98,8 @@ CREATE TABLE `parkinglog` (
 -- ----------------------------
 -- Records of parkinglog
 -- ----------------------------
+INSERT INTO `parkinglog` VALUES ('bad5e156-0ea0-11e6-969e-00ff9099da81', 'bfd083b6-9179-4c99-81ee-2713bc2a463c', 'f42631f6-fa26-4aa0-9f4b-7b1909ed6aa8', 'e5a3715d-047c-11e6-b034-00ff9099da81', '2016-04-29 04:10:04', '2016-04-29 14:20:18', '1', '1');
+INSERT INTO `parkinglog` VALUES ('bad5ee26-0ea0-11e6-969e-00ff9099da81', 'bfd083b6-9179-4c99-81ee-2713bc2a463c', '0a9a5764-f36f-4450-8a36-f721ed4dae2b', 'b4850fda-047b-11e6-b034-00ff9099da81', '2016-04-30 06:13:07', '2016-04-30 11:19:13', '0', '1');
 
 -- ----------------------------
 -- Table structure for user
@@ -120,6 +124,7 @@ INSERT INTO `user` VALUES ('7a835e70-819d-421e-be28-7299bbf9dbdf', 'pppp', '81dc
 INSERT INTO `user` VALUES ('bfd083b6-9179-4c99-81ee-2713bc2a463c', 'gggg', '81dc9bdb52d04dc20036dbd8313ed055', '0');
 INSERT INTO `user` VALUES ('d9ef9c55-379f-4cd5-9227-0bb6fc221b37', 'gfdd', '1234', '0');
 INSERT INTO `user` VALUES ('e30a1801-bdec-4ba7-981b-09e2807ff26f', 'bibi', '1234', '0');
+INSERT INTO `user` VALUES ('ed2f5ebb-30af-43fc-8171-cd4ae608388f', 'hhhh', '81dc9bdb52d04dc20036dbd8313ed055', '0');
 
 -- ----------------------------
 -- Table structure for usercar
@@ -136,6 +141,10 @@ CREATE TABLE `usercar` (
 -- ----------------------------
 -- Records of usercar
 -- ----------------------------
+INSERT INTO `usercar` VALUES ('0a9a5764-f36f-4450-8a36-f721ed4dae2b', 'bfd083b6-9179-4c99-81ee-2713bc2a463c', '粤A 14444', '0');
+INSERT INTO `usercar` VALUES ('bfd083b6-9179-4c99-81ee-2711232a463c', 'bfd083b6-9179-4c99-81ee-2713bc2a463c', '粤B 12345', '1');
+INSERT INTO `usercar` VALUES ('f42631f6-fa26-4aa0-9f4b-7b1909ed6aa8', 'bfd083b6-9179-4c99-81ee-2713bc2a463c', '京G HA123', '0');
+INSERT INTO `usercar` VALUES ('f961ae92-0db3-4144-a461-fcd1efc99bbe', 'ed2f5ebb-30af-43fc-8171-cd4ae608388f', '川A 51211', '0');
 
 -- ----------------------------
 -- Table structure for userfavorite
@@ -147,13 +156,15 @@ CREATE TABLE `userfavorite` (
   `userId` varchar(36) NOT NULL,
   `currentTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP,
   `cancelTime` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  `isCancel` tinyint(4) NOT NULL,
+  `isCancel` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of userfavorite
 -- ----------------------------
+INSERT INTO `userfavorite` VALUES ('45a02dd0-0f65-11e6-af62-00ff9099da81', 'e5a3715d-047c-11e6-b034-00ff9099da81', 'ed2f5ebb-30af-43fc-8171-cd4ae608388f', '2016-05-01 16:08:22', '2016-05-26 16:08:15', '0');
+INSERT INTO `userfavorite` VALUES ('45a03a31-0f65-11e6-af62-00ff9099da81', 'e5a380fc-047c-11e6-b034-00ff9099da81', 'ed2f5ebb-30af-43fc-8171-cd4ae608388f', '2016-05-01 06:11:09', '2016-05-01 16:09:44', '1');
 
 -- ----------------------------
 -- Table structure for userlog
@@ -167,7 +178,7 @@ CREATE TABLE `userlog` (
   `isLoginOut` tinyint(1) NOT NULL DEFAULT '0',
   `logoutTime` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`logId`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of userlog
@@ -189,7 +200,11 @@ INSERT INTO `userlog` VALUES ('17', '36b6a9af-dfc7-458c-b477-0f20b6eee403', '201
 INSERT INTO `userlog` VALUES ('18', '36b6a9af-dfc7-458c-b477-0f20b6eee403', '2016-04-26 20:14:00', '869460011154248', '0', null);
 INSERT INTO `userlog` VALUES ('19', '36b6a9af-dfc7-458c-b477-0f20b6eee403', '2016-04-26 20:20:42', '869460011154248', '1', '2016-04-26 20:21:12');
 INSERT INTO `userlog` VALUES ('20', '7a835e70-819d-421e-be28-7299bbf9dbdf', '2016-04-26 22:22:50', '869460011154248', '1', '2016-04-26 22:59:00');
-INSERT INTO `userlog` VALUES ('21', 'bfd083b6-9179-4c99-81ee-2713bc2a463c', '2016-04-26 22:59:56', '869460011154248', '0', null);
+INSERT INTO `userlog` VALUES ('21', 'bfd083b6-9179-4c99-81ee-2713bc2a463c', '2016-04-26 22:59:56', '869460011154248', '1', '2016-04-28 21:44:32');
+INSERT INTO `userlog` VALUES ('22', 'bfd083b6-9179-4c99-81ee-2713bc2a463c', '2016-04-28 21:44:45', '869460011154248', '0', null);
+INSERT INTO `userlog` VALUES ('23', 'bfd083b6-9179-4c99-81ee-2713bc2a463c', '2016-04-30 22:35:56', '869055029617010', '1', '2016-05-01 01:04:40');
+INSERT INTO `userlog` VALUES ('24', 'ed2f5ebb-30af-43fc-8171-cd4ae608388f', '2016-05-01 01:05:12', '869055029617010', '0', null);
+INSERT INTO `userlog` VALUES ('25', 'ed2f5ebb-30af-43fc-8171-cd4ae608388f', '2016-05-01 20:54:45', '351524050634454', '0', null);
 
 -- ----------------------------
 -- Table structure for usermoney
@@ -203,7 +218,7 @@ CREATE TABLE `usermoney` (
   `remain` int(11) NOT NULL,
   `currentTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`logId`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of usermoney
@@ -211,6 +226,7 @@ CREATE TABLE `usermoney` (
 INSERT INTO `usermoney` VALUES ('1', 'bfd083b6-9179-4c99-81ee-2713bc2a463c', '2', '10', '10', '2016-04-26 22:59:56');
 INSERT INTO `usermoney` VALUES ('2', 'bfd083b6-9179-4c99-81ee-2713bc2a463c', '2', '10', '20', '2016-04-27 23:18:49');
 INSERT INTO `usermoney` VALUES ('3', 'bfd083b6-9179-4c99-81ee-2713bc2a463c', '1', '10', '10', '2016-04-27 23:19:03');
+INSERT INTO `usermoney` VALUES ('4', 'ed2f5ebb-30af-43fc-8171-cd4ae608388f', '2', '10', '10', '2016-05-01 01:05:12');
 
 -- ----------------------------
 -- Table structure for userorder
@@ -229,3 +245,9 @@ CREATE TABLE `userorder` (
 -- ----------------------------
 -- Records of userorder
 -- ----------------------------
+
+-- ----------------------------
+-- View structure for parkingview
+-- ----------------------------
+DROP VIEW IF EXISTS `parkingview`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost`  VIEW `parkingview` AS select p.* , usercar.plate, markerinfo.name from parkinglog AS p inner join usercar on usercar.carId = p.carId inner join markerinfo on markerinfo.id=p.markerId ;
