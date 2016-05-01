@@ -7,6 +7,7 @@ import com.horacework.utils.JsonUtil;
 import com.horacework.utils.MyPrivateKey;
 import com.horacework.utils.RSAUtils;
 import com.horacework.utils.SuccessStateObj;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +34,8 @@ public class ClientController extends BaseController {
     private UsercarRepository mUsercarRepository;
     @Autowired
     private UserParkingRepository mUserParkingRepository;
+    @Autowired
+    private UserFavoriteRepository mUserFavoriteRepository;
     @Autowired
     private UserFeedbackRepository mUserFeedbackRepository;
 
@@ -322,6 +325,44 @@ public class ClientController extends BaseController {
 //        resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"停车记录",p));
 //        response.getWriter().write(resultStr);
 //    }
+
+    //用户收藏
+    @RequestMapping(value = "/userFavoriteList",method = RequestMethod.GET)
+    public void userFavoritePark(@RequestParam String userid)throws IOException{
+        String resStr;
+        try {
+            List<UserfavoriteShowEntity> resultList = new ArrayList<UserfavoriteShowEntity>();
+            List<UserfavoriteEntity> userfavoriteEntityList = mUserFavoriteRepository.findUserFavoriteByUserId(userid);
+            for (UserfavoriteEntity item : userfavoriteEntityList){
+                UserfavoriteShowEntity showEntity = new UserfavoriteShowEntity();
+                MarkerinfoEntity markerinfoEntity = markerinfoRepo.findOne(item.getMarkerId());
+                showEntity.setId(item.getId());
+                showEntity.setMarkerId(item.getMarkerId());
+                showEntity.setName(markerinfoEntity.getName());
+                showEntity.setPrice(markerinfoEntity.getPrice());
+                resultList.add(showEntity);
+            }
+            resStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"查找收藏记录成功",resultList));
+        }catch (NullPointerException e){
+            resStr = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"无收藏记录"));
+        }
+        response.getWriter().write(resStr);
+    }
+    @RequestMapping(value = "/userFavoriteDelete",method = RequestMethod.POST)
+    public void  userFavorietDelete(@RequestParam String id ,@RequestParam String userid) throws IOException {
+        String resultStr;
+        try {
+            UserfavoriteEntity userfavoriteEntity = mUserFavoriteRepository.UserFavoriteDelete(id,userid);
+            userfavoriteEntity.setCancelTime(new Timestamp(System.currentTimeMillis()));
+            userfavoriteEntity.setIsCancel(1);
+            UserfavoriteEntity resEntity = mUserFavoriteRepository.saveAndFlush(userfavoriteEntity);
+            resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"删除收藏成功"));
+        } catch (NullPointerException e) {
+            resultStr = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"删除收藏失败"));
+        }
+        response.getWriter().write(resultStr);
+    }
+
 
     //用户反馈
     @RequestMapping(value = "/userFeedback",method = RequestMethod.POST)
