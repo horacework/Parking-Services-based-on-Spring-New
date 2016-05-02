@@ -14,5 +14,7 @@ public interface UserParkingRepository extends JpaRepository<ParkinglogEntity,St
     @Query(value = "select p from ParkinglogEntity p where p.userId=:userId and p.leaveTime!=null ORDER BY p.enterTime DESC")
     List<ParkinglogEntity> findUserParkingAllLogById(@Param("userId") String userId);
 
+    @Query(value = "select p from ParkinglogEntity p where p.userId=:userId and p.leaveTime=null ORDER BY p.enterTime DESC")
+    List<ParkinglogEntity> userParkingStatusById(@Param("userId") String userId);
 
 }

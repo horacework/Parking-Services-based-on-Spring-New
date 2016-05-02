@@ -237,6 +237,15 @@ public class ClientController extends BaseController {
         return resultStr;
     }
 
+    //用户停车状态
+    @RequestMapping(value = "/userParkingStatus",method = RequestMethod.GET)
+    public void userParkingStatus(@RequestParam String userid) throws IOException{
+        String resultStr;
+        List<ParkinglogEntity> parkingList = mUserParkingRepository.userParkingStatusById(userid);
+        resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"查询成功",parkingList.size()));
+        response.getWriter().write(resultStr);
+    }
+
     //用户车牌操作
     @RequestMapping(value = "/userCars",method = RequestMethod.GET)
     public void findUserCarsById(@RequestParam String userid) throws Exception{
