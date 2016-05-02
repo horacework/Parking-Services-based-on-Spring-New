@@ -12,6 +12,7 @@
 * 2016.04.20 支持Android端获取Marker简要与详细信息
 * 2016.04.25 支持Android端注册、登录功能
 * 2016.04.27 支持Android端用户金额相关功能
+* 2016.05.02 支持Android端用户车牌管理、预约查询功能、停车记录、停车场收藏、意见反馈功能
 
 相应匹配的**Android端**项目地址：[github.com/horacework/Parking-Services-based-on-Android](https://github.com/horacework/Parking-Services-based-on-Android)
 
