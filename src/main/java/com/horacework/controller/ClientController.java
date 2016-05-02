@@ -245,6 +245,29 @@ public class ClientController extends BaseController {
         resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"查询成功",parkingList.size()));
         response.getWriter().write(resultStr);
     }
+    @RequestMapping(value = "/userParkingStatusInfo",method = RequestMethod.GET)
+    public void userParkingStatusInfo(@RequestParam String userid) throws IOException{
+        String resultStr;
+        try {
+            List<ParkinglogEntity> parkingList = mUserParkingRepository.userParkingStatusById(userid);
+            List<UserParkingStatusEntity> showList = new ArrayList<UserParkingStatusEntity>();
+            for (ParkinglogEntity item : parkingList){
+                UserParkingStatusEntity statusEntity = new UserParkingStatusEntity();
+                statusEntity.setLogId(item.getLogId());
+                statusEntity.setEnterTime(item.getEnterTime());
+                MarkerinfoEntity markerinfoEntity = markerinfoRepo.findOne(item.getMarkerId());
+                statusEntity.setMarkerName(markerinfoEntity.getName());
+                statusEntity.setPrice(markerinfoEntity.getPrice());
+                UsercarEntity usercarEntity = mUsercarRepository.findUserCarNameById(item.getCarId());
+                statusEntity.setCarName(usercarEntity.getPlate());
+                showList.add(statusEntity);
+            }
+            resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"查询成功",showList));
+        } catch (NullPointerException e) {
+            resultStr = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"查询失败"));
+        }
+        response.getWriter().write(resultStr);
+    }
 
     //用户车牌操作
     @RequestMapping(value = "/userCars",method = RequestMethod.GET)
