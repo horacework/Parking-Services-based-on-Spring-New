@@ -37,6 +37,8 @@ public class ClientController extends BaseController {
     @Autowired
     private UserFavoriteRepository mUserFavoriteRepository;
     @Autowired
+    private UserOrderRepository mUserOrderRepository;
+    @Autowired
     private UserFeedbackRepository mUserFeedbackRepository;
 
 
@@ -363,6 +365,43 @@ public class ClientController extends BaseController {
         response.getWriter().write(resultStr);
     }
 
+
+    //用户预订相关API
+    @RequestMapping(value = "/userOrderShow",method = RequestMethod.GET)
+    public void  userOrderShow(@RequestParam String userid) throws IOException {
+        String resultStr;
+        Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+        try {
+            List<UserorderShowEntity> orderShowList = new ArrayList<UserorderShowEntity>();
+            List<UserorderEntity> orderList = mUserOrderRepository.findUserOrderByUserId(userid,currentTime);
+            for (UserorderEntity item : orderList){
+                UserorderShowEntity showItem = new UserorderShowEntity();
+                showItem.setOrderId(item.getOrderId());
+                showItem.setMarkerId(item.getMarkerId());
+                showItem.setOrderTime(item.getOrderTime());
+                MarkerinfoEntity markerinfoEntity = markerinfoRepo.findOne(item.getMarkerId());
+                showItem.setMarkName(markerinfoEntity.getName());
+                orderShowList.add(showItem);
+            }
+            resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"查询订单成功",orderShowList));
+        }catch (NullPointerException e){
+            resultStr = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"没有预订订单"));
+        }
+        response.getWriter().write(resultStr);
+    }
+    @RequestMapping(value = "/userOrderDelete",method = RequestMethod.POST)
+    public void  userOrderDelete(@RequestParam String orderid ,@RequestParam String userid) throws IOException {
+        String resultStr;
+        try {
+            UserorderEntity userorderEntity = mUserOrderRepository.findUserOrderByOrderIdAndUserId(orderid,userid);
+            userorderEntity.setIsDel(1);
+            mUserOrderRepository.saveAndFlush(userorderEntity);
+            resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"删除订单成功"));
+        }catch (NullPointerException e){
+            resultStr = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"删除订单失败"));
+        }
+        response.getWriter().write(resultStr);
+    }
 
     //用户反馈
     @RequestMapping(value = "/userFeedback",method = RequestMethod.POST)

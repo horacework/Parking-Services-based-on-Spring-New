@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 /**
- * Created by HoraceChan on 2016/4/26.
+ * Created by HoraceChan on 2016/5/2.
  */
 @Entity
 @Table(name = "userorder", schema = "parking", catalog = "")
@@ -14,7 +14,7 @@ public class UserorderEntity {
     private String userId;
     private Timestamp orderTime;
     private Timestamp present;
-    private byte isDel;
+    private int isDel;
 
     @Id
     @Column(name = "orderId", nullable = false, length = 36)
@@ -68,11 +68,11 @@ public class UserorderEntity {
 
     @Basic
     @Column(name = "isDel", nullable = false)
-    public byte getIsDel() {
+    public int getIsDel() {
         return isDel;
     }
 
-    public void setIsDel(byte isDel) {
+    public void setIsDel(int isDel) {
         this.isDel = isDel;
     }
 
@@ -100,7 +100,7 @@ public class UserorderEntity {
         result = 31 * result + (userId != null ? userId.hashCode() : 0);
         result = 31 * result + (orderTime != null ? orderTime.hashCode() : 0);
         result = 31 * result + (present != null ? present.hashCode() : 0);
-        result = 31 * result + (int) isDel;
+        result = 31 * result + isDel;
         return result;
     }
 }
