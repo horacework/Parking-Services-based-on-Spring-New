@@ -18,5 +18,6 @@ public interface UserOrderRepository extends JpaRepository<UserorderEntity,Strin
     @Query(value = "select p from UserorderEntity p where p.orderId=:orderId and p.userId=:userId and p.isDel=0 ")
     UserorderEntity findUserOrderByOrderIdAndUserId(@Param("orderId") String orderId,@Param("userId") String userId );
 
-
+    @Query(value = "select p from UserorderEntity p where p.userId=:userId and p.orderTime=:orderTime and p.markerId=:markerId")
+    List<UserorderEntity> checkUserOrderIsRepeat(@Param("userId") String userId , @Param("orderTime") Timestamp orderTime , @Param("markerId") String markerId);
 }

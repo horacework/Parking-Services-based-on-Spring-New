@@ -434,6 +434,26 @@ public class ClientController extends BaseController {
         }
         response.getWriter().write(resultStr);
     }
+    @RequestMapping(value = "/userOrderBook",method = RequestMethod.POST)
+    public void userOrderBook(@RequestParam String userid,@RequestParam String markerid,@RequestParam long ordertime) throws IOException {
+        String resultStr;
+        //先查重
+        Timestamp ordertimeTime  = new Timestamp(ordertime);
+        List<UserorderEntity> isRepeat = mUserOrderRepository.checkUserOrderIsRepeat(userid,ordertimeTime,markerid);
+        if (isRepeat.size()>0){
+            resultStr = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"不能提交订单重复的订单"));
+        }else {
+            UserorderEntity newOrder = new UserorderEntity();
+            newOrder.setOrderId(UUID.randomUUID().toString());
+            newOrder.setUserId(userid);
+            newOrder.setMarkerId(markerid);
+            newOrder.setOrderTime(ordertimeTime);
+            newOrder.setPresent(new Timestamp(System.currentTimeMillis()));
+            mUserOrderRepository.saveAndFlush(newOrder);
+            resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"提交订单成功"));
+        }
+        response.getWriter().write(resultStr);
+    }
 
     //用户反馈
     @RequestMapping(value = "/userFeedback",method = RequestMethod.POST)
@@ -460,6 +480,22 @@ public class ClientController extends BaseController {
     public void getAllMarkerId() throws Exception {
         //List<UserEntity> results=mUserRepo.findAll();
         List<MarkeridEntity> results = markeridRepo.findAll();
+        String resStr;
+        if (results == null) {
+            resStr = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"数据发生错误"));
+        } else {
+            resStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"数据查询成功",results));
+        }
+        try {
+            response.getWriter().write(resStr);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @RequestMapping(value = "/getAllMarkerInfo",method = RequestMethod.GET)
+    public void getAllMarkerInfo() throws Exception {
+        //List<UserEntity> results=mUserRepo.findAll();
+        List<MarkerinfoEntity> results = markerinfoRepo.findAll();
         String resStr;
         if (results == null) {
             resStr = JsonUtil.toJson(new SuccessStateObj(404,System.currentTimeMillis(),0,0,"数据发生错误"));
