@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 /**
- * Created by HoraceChan on 2016/4/26.
+ * Created by HoraceChan on 2016/5/4.
  */
 @Entity
 @Table(name = "parkinglog", schema = "parking", catalog = "")
@@ -15,8 +15,8 @@ public class ParkinglogEntity {
     private String markerId;
     private Timestamp enterTime;
     private Timestamp leaveTime;
-    private byte isOrder;
-    private byte isComplete;
+    private int isOrder;
+    private int isComplete;
 
     @Id
     @Column(name = "logId", nullable = false, length = 36)
@@ -80,21 +80,21 @@ public class ParkinglogEntity {
 
     @Basic
     @Column(name = "isOrder", nullable = false)
-    public byte getIsOrder() {
+    public int getIsOrder() {
         return isOrder;
     }
 
-    public void setIsOrder(byte isOrder) {
+    public void setIsOrder(int isOrder) {
         this.isOrder = isOrder;
     }
 
     @Basic
     @Column(name = "isComplete", nullable = false)
-    public byte getIsComplete() {
+    public int getIsComplete() {
         return isComplete;
     }
 
-    public void setIsComplete(byte isComplete) {
+    public void setIsComplete(int isComplete) {
         this.isComplete = isComplete;
     }
 
@@ -125,8 +125,8 @@ public class ParkinglogEntity {
         result = 31 * result + (markerId != null ? markerId.hashCode() : 0);
         result = 31 * result + (enterTime != null ? enterTime.hashCode() : 0);
         result = 31 * result + (leaveTime != null ? leaveTime.hashCode() : 0);
-        result = 31 * result + (int) isOrder;
-        result = 31 * result + (int) isComplete;
+        result = 31 * result + isOrder;
+        result = 31 * result + isComplete;
         return result;
     }
 }

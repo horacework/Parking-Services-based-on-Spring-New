@@ -40,6 +40,8 @@ public class ClientController extends BaseController {
     private UserOrderRepository mUserOrderRepository;
     @Autowired
     private UserFeedbackRepository mUserFeedbackRepository;
+    @Autowired
+    private ParkingStatusRepository mParkingStatusRepository;
 
 
     @Autowired
@@ -539,4 +541,77 @@ public class ClientController extends BaseController {
             e.printStackTrace();
         }
     }
+
+
+    //车子进出车库扫码
+    @RequestMapping(value = "/userScanQR",method = RequestMethod.POST)
+    public void userScanQR (@RequestParam String logid , @RequestParam String userid , @RequestParam String plate , @RequestParam String markerid) throws Exception {
+        String resultStr;
+        Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+        Timestamp currentTimeAfterTwoHour = new Timestamp(System.currentTimeMillis()+7200000);
+        List<UsercarEntity> findCarid = mUsercarRepository.findCarIdByPlate(plate,userid);
+        String carid = findCarid.get(0).getCarId();
+        UsermoneyEntity usermoney = mUsermoneyRepository.findUserMoneyLastLogById(userid);
+        List<ParkinglogEntity> checkInOrOut = mUserParkingRepository.checkUserCarIsInTheMarker(userid,markerid,carid);
+        if (checkInOrOut.size()==0){
+            //进库--->判断是否预订---->判断车场是否有空位--->有没有余额
+            List<UserorderEntity> checkIsOrderOntime = mUserOrderRepository.checkUserIsOrderOntime(userid,markerid,currentTime,currentTimeAfterTwoHour);
+            if (checkIsOrderOntime.size()>0){
+                //已预订车位
+                if (usermoney.getRemain()<=0){
+                    resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"已预订车位，但余额不足，请充值！"));
+                }else {
+                    ParkinglogEntity parkinglogEntity = new ParkinglogEntity();
+                    parkinglogEntity.setLogId(logid);
+                    parkinglogEntity.setUserId(userid);
+                    parkinglogEntity.setMarkerId(markerid);
+                    parkinglogEntity.setCarId(carid);
+                    parkinglogEntity.setEnterTime(currentTime);
+                    parkinglogEntity.setIsOrder(1);
+                    mUserParkingRepository.saveAndFlush(parkinglogEntity);
+                    ParkingstatusEntity parkingstatusEntity = mParkingStatusRepository.findOne(logid);
+                    parkingstatusEntity.setStatus(1);//入库为1，出库为2
+                    mParkingStatusRepository.saveAndFlush(parkingstatusEntity);
+                    resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"已预订车位，扫码成功"));
+                }
+            }else {
+                MarkerinfoEntity markerinfo = markerinfoRepo.findOne(markerid);
+                List<UserorderEntity> checkMarkerOrderOntime = mUserOrderRepository.checkMarkerOrderOntime(markerid,currentTime,currentTimeAfterTwoHour);
+                List<ParkinglogEntity> checkMarkerCarNum = mUserParkingRepository.checkTheMarkerParkingNum(markerid);
+                if (markerinfo.getSpace()>checkMarkerCarNum.size()+checkMarkerOrderOntime.size()){
+                    //有空位可以进入
+                    ParkinglogEntity parkinglogEntity = new ParkinglogEntity();
+                    parkinglogEntity.setLogId(logid);
+                    parkinglogEntity.setUserId(userid);
+                    parkinglogEntity.setMarkerId(markerid);
+                    parkinglogEntity.setCarId(carid);
+                    parkinglogEntity.setEnterTime(currentTime);
+                    parkinglogEntity.setIsOrder(0);
+                    mUserParkingRepository.saveAndFlush(parkinglogEntity);
+                    ParkingstatusEntity parkingstatusEntity = mParkingStatusRepository.findOne(logid);
+                    parkingstatusEntity.setStatus(1);//入库为1，出库为2
+                    mParkingStatusRepository.saveAndFlush(parkingstatusEntity);
+                    resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"扫码成功"));
+                }else {
+                    //车位已满
+                    resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"车位已满"));
+                }
+            }
+        }else {
+            //出库---->计算进出库时间--->计费扣费---->余额还剩多少
+            List<ParkinglogEntity> parkinglogList = mUserParkingRepository.checkCarParkingLog(markerid,carid);
+            ParkinglogEntity parkinglogEntity = parkinglogList.get(0);
+            parkinglogEntity.setLeaveTime(currentTime);
+            parkinglogEntity.setIsComplete(1);
+            mUserParkingRepository.saveAndFlush(parkinglogEntity);
+            ParkingstatusEntity parkingstatusEntity = mParkingStatusRepository.findOne(logid);
+            parkingstatusEntity.setStatus(2);//入库为1，出库为2
+            mParkingStatusRepository.saveAndFlush(parkingstatusEntity);
+            resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"离开成功"));
+        }
+        response.getWriter().write(resultStr);
+    }
+
+
+
 }

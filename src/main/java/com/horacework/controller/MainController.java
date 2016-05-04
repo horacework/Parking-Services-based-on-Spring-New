@@ -1,24 +1,10 @@
 package com.horacework.controller;
 
-import com.horacework.model.MarkeridEntity;
-import com.horacework.model.MarkerinfoEntity;
-import com.horacework.model.UserEntity;
-import com.horacework.repository.MarkeridRepository;
-import com.horacework.repository.MarkerinfoRepository;
-import com.horacework.repository.UserRepository;
-import com.horacework.utils.JsonUtil;
 import com.horacework.utils.MyPrivateKey;
 import com.horacework.utils.RSAUtils;
-import com.mysql.jdbc.log.Log;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 
 @Controller

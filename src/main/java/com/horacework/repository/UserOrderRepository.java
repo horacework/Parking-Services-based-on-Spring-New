@@ -20,4 +20,11 @@ public interface UserOrderRepository extends JpaRepository<UserorderEntity,Strin
 
     @Query(value = "select p from UserorderEntity p where p.userId=:userId and p.orderTime=:orderTime and p.markerId=:markerId")
     List<UserorderEntity> checkUserOrderIsRepeat(@Param("userId") String userId , @Param("orderTime") Timestamp orderTime , @Param("markerId") String markerId);
+
+    @Query(value = "select p from UserorderEntity p where p.userId=:userId and p.markerId=:markerId and orderTime>:currentTime and orderTime<:currentTimeAfterTwoHour")
+    List<UserorderEntity> checkUserIsOrderOntime(@Param("userId") String userId , @Param("markerId") String markerId , @Param("currentTime") Timestamp currentTime , @Param("currentTimeAfterTwoHour") Timestamp currentTimeAfterTwoHour);
+
+    @Query(value = "select p from UserorderEntity p where p.markerId=:markerId and orderTime>:currentTime and orderTime<:currentTimeAfterTwoHour")
+    List<UserorderEntity> checkMarkerOrderOntime(@Param("markerId") String markerId , @Param("currentTime") Timestamp currentTime , @Param("currentTimeAfterTwoHour") Timestamp currentTimeAfterTwoHour);
+
 }

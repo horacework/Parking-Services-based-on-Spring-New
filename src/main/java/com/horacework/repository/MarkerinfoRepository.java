@@ -1,7 +1,6 @@
 package com.horacework.repository;
 
 import com.horacework.model.MarkerinfoEntity;
-import com.horacework.model.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -22,4 +22,8 @@ public interface UsercarRepository extends JpaRepository<UsercarEntity,String>{
     @Query(value = "SELECT p FROM UsercarEntity p" +
             " where p.userId=:userId and p.carId=:carId and p.isDel=0 ")
     UsercarEntity findOneUserCarById(@Param("userId") String userId , @Param("carId") String carId);
+
+    @Query(value = "SELECT p from UsercarEntity p " +
+            "where p.plate=:plate and p.userId=:userId")
+    List<UsercarEntity> findCarIdByPlate(@Param("plate") String plate , @Param("userId") String userId);
 }
