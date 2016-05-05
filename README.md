@@ -13,9 +13,10 @@
 * 2016.04.25 支持Android端注册、登录功能
 * 2016.04.27 支持Android端用户金额相关功能
 * 2016.05.02 支持Android端用户车牌管理、预约查询功能、停车记录、停车场收藏、意见反馈功能
+* 2016.05.06 支持Android端停车场门禁部分，修复部分小错误。基本完工！
 
-相应匹配的**Android端**项目地址：[github.com/horacework/Parking-Services-based-on-Android](https://github.com/horacework/Parking-Services-based-on-Android)
-
+相应匹配的**Android客户端**项目地址：[github.com/horacework/Parking-Services-based-on-Android](https://github.com/horacework/Parking-Services-based-on-Android)
+相应匹配的**Android客户端**项目地址：[https://github.com/horacework/Parking-Services-based-on-Android-Door](https://github.com/horacework/Parking-Services-based-on-Android-Door)
 #### 本人毕业设计项目
 
 * 题目名称：基于Android的停车场信息服务系统设计与实现
