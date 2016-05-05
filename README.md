@@ -16,7 +16,8 @@
 * 2016.05.06 支持Android端停车场门禁部分，修复部分小错误。基本完工！
 
 相应匹配的**Android客户端**项目地址：[github.com/horacework/Parking-Services-based-on-Android](https://github.com/horacework/Parking-Services-based-on-Android)
-相应匹配的**Android客户端**项目地址：[https://github.com/horacework/Parking-Services-based-on-Android-Door](https://github.com/horacework/Parking-Services-based-on-Android-Door)
+
+相应匹配的**Android客户端**项目地址：[github.com/horacework/Parking-Services-based-on-Android-Door](https://github.com/horacework/Parking-Services-based-on-Android-Door)
 #### 本人毕业设计项目
 
 * 题目名称：基于Android的停车场信息服务系统设计与实现
