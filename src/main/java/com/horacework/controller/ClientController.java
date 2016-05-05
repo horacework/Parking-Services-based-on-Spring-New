@@ -9,6 +9,7 @@ import com.horacework.utils.RSAUtils;
 import com.horacework.utils.SuccessStateObj;
 import com.sun.org.apache.bcel.internal.generic.NEW;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -398,7 +399,29 @@ public class ClientController extends BaseController {
         }
         response.getWriter().write(resultStr);
     }
-
+    @RequestMapping(value = "/userFavoriteCheck",method = RequestMethod.GET)
+    public void  userFavoriteCheck(@RequestParam String userid , @RequestParam String markerid) throws IOException {
+        String resultStr;
+        List<UserfavoriteEntity> userfavoriteList = mUserFavoriteRepository.UserFavoriteCheck(userid,markerid);
+        if (userfavoriteList.size()>0){
+            resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"用户已收藏"));
+        }else {
+            resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"用户未收藏"));
+        }
+        response.getWriter().write(resultStr);
+    }
+    @RequestMapping(value = "/userFavoriteAdd",method = RequestMethod.POST)
+    public void  userFavoriteAdd(@RequestParam String userid , @RequestParam String markerid) throws IOException {
+        String resultStr;
+        UserfavoriteEntity entity = new UserfavoriteEntity();
+        entity.setId(UUID.randomUUID().toString());
+        entity.setUserId(userid);
+        entity.setMarkerId(markerid);
+        entity.setCurrentTime(new Timestamp(System.currentTimeMillis()));
+        mUserFavoriteRepository.saveAndFlush(entity);
+        resultStr = JsonUtil.toJson(new SuccessStateObj(200,System.currentTimeMillis(),0,0,"收藏成功"));
+        response.getWriter().write(resultStr);
+    }
 
     //用户预订相关API
     @RequestMapping(value = "/userOrderShow",method = RequestMethod.GET)
